@@ -110,8 +110,8 @@ export function useCreateUser() {
       const fakeUser = { ...newUser, id: tempId } as User;
       
       queryClient.setQueryData<User[]>(["users"], (old) => {
-        if (!old) return [fakeUser];
-        return [...old, fakeUser];
+          if (!old) return [fakeUser];
+          return [fakeUser, ...old];
       });
 
       // Log activity
