@@ -5,6 +5,8 @@ import { User } from "@/types/user";
 import { FaChevronDown } from "react-icons/fa";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import DeleteConfirm from "./DeleteConfirm";
+import UserForm from "./UserForm";
 import { useDeleteUser, useUpdateUser, useCreateUser } from "@/hooks/useUserMutations";
 
 interface Props {
@@ -100,7 +102,7 @@ export default function UserTable({
                                 onChange={(e) => setSearch(e.target.value)}
                             />
 
-                            {/* Ssorting*/}
+                            {/* Sort */}
                             <select
                                 className="px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all cursor-pointer"
                                 style={{
@@ -119,7 +121,7 @@ export default function UserTable({
                                 <option value="desc">Z → A</option>
                             </select>
 
-                            {/*  company filter */}
+                            {/* Company Filter (Radix Select) */}
                             <Select.Root
                                 value={company ?? "all"}
                                 onValueChange={(v) => setCompany(v === "all" ? null : v)}
@@ -170,6 +172,7 @@ export default function UserTable({
                                 </Select.Content>
                             </Select.Root>
 
+                            {/* Clear Filters Button */}
                             {(search || sort || company) && (
                                 <button
                                     onClick={() => {
@@ -198,6 +201,7 @@ export default function UserTable({
                             )}
                         </div>
 
+                        {/* Create Button */}
                         <button
                             className="px-6 py-2.5 text-white rounded-lg transition-all font-semibold shadow-md"
                             style={{ backgroundColor: "var(--primary)" }}
@@ -334,11 +338,35 @@ export default function UserTable({
                         </button>
                     </div>
 
+                    {/* Delete Confirmation Dialog */}
+                    {deleteUser && (
+                        <DeleteConfirm
+                            user={deleteUser}
+                            open={!!deleteUser}
+                            onOpenChange={(open) => !open && setDeleteUser(null)}
+                            onConfirm={handleDelete}
+                            isDeleting={deleteMutation.isPending}
+                        />
+                    )}
 
+                    {/* Edit User Dialog */}
+                    {editUser && (
+                        <UserForm
+                            user={editUser}
+                            open={!!editUser}
+                            onOpenChange={(open) => !open && setEditUser(null)}
+                            onSubmit={handleUpdate}
+                            isSubmitting={updateMutation.isPending}
+                        />
+                    )}
 
-
-
-
+                    {/* Create User Dialog */}
+                    <UserForm
+                        open={createOpen}
+                        onOpenChange={setCreateOpen}
+                        onSubmit={handleCreate}
+                        isSubmitting={createMutation.isPending}
+                    />
                 </>
             )}
         </div>
